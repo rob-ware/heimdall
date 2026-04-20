@@ -80,7 +80,7 @@ class IntrusionDetection extends Command
                 $new_visitor->mac_address = $mac_address;
                 $new_visitor->authorised = $authorised;
                 $new_visitor->login_time = $login_time;
-                print_r($new_visitor);die;
+                $new_visitor->save();
 
             }
         }
