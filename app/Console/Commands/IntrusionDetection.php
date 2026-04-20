@@ -42,7 +42,7 @@ class IntrusionDetection extends Command
                 $day = $visitor_details[3];
                 $login = $visitor_details[4];
                 $login_time = "$year-$month-$day $login:00";
-                $visitor_mac_search = "ip neigh | grep '$ip_address'";
+                $visitor_mac_search = "ip neigh | grep '$ip_address' | awk '{print $5}'";
                 $fp = popen ($visitor_mac_search, "r");
                 $visitor_macs = array();
                 while ($rec = fgets($fp))
