@@ -16,7 +16,7 @@ class IntrusionDetection extends Command
     public function handle()
     {
         //
-        $user_search = "last | grep 'still logged in' |  awk '{print $1, $2, $4, $5, $6}'";
+        $user_search = "last | grep 'still logged in' |  awk '{print $1, $3, $4, $5, $6}'";
         $fp = popen ($user_search, "r");
         $users = array();
         while ($rec = fgets($fp))
