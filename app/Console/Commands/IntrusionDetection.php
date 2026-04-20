@@ -18,8 +18,7 @@ class IntrusionDetection extends Command
     public function handle()
     {
         //Initialise the current_visitors table
-        $current_visitors_model = new CurrentVisitors;
-        $deleted_visitors = $current_visitors_model->delete();
+        $deleted_visitors = CurrentVisitors::where('id', '>', '0')->delete();
         $current_visitors_search = "last | grep 'still logged in' |  grep -v 'ansible' | grep '.' | awk '{print $1, $3, $5, $6, $7}'";
         $fp = popen ($current_visitors_search, "r");
         $current_visitors = array();
