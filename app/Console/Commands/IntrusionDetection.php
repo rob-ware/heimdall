@@ -47,7 +47,7 @@ class IntrusionDetection extends Command
         {
             $current_visitors[] = trim($rec);
         }
-        /print_r($current_visitors);die;
+
         if(count($current_visitors) > 0)
         {
             foreach($current_visitors as $current_visitor)
