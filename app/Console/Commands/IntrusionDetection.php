@@ -7,6 +7,7 @@ use App\Models\CurrentVisitors;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 #[Signature('app:intrusion-detection {--cli}')]
 #[Description('Checks OS users for authorisation')]
@@ -17,6 +18,20 @@ class IntrusionDetection extends Command
      */
     public function handle()
     {
+        //Test Mail
+        $wedu_email = env('WEDU_EMAIL', 'careers@ulster.ac.uk')
+        if ($this->option('cli'))
+        {
+            $this->info('Emailing out warning of multiple MAC addresses!');
+        }
+
+        Mail::send('emails.super.multiple_macs', ['wedu_email' => $wedu_email, function ($message) use ($wedu_email)
+        {
+            $message->from($wedu_email, 'Ulster Employability and Careers');
+            $message->replyTo($wedu_email, 'Ulster Employability and Careers');
+            $message->subject('Multiple MAC Addresses found!');
+
+        });
         //Initialise the current_visitors table
         $deleted_visitors = CurrentVisitors::where('id', '>', '0')->delete();
         $current_visitors_search = "last | grep 'still logged in' |  grep -v 'ansible' | grep '.' | awk '{print $1, $3, $5, $6, $7}'";
