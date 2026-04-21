@@ -21,7 +21,6 @@ class IntrusionDetectionSystem extends Command
     public function handle()
     {
         //
-        $wedu_email = env('WEDU_EMAIL', 'careers@ulster.ac.uk');
         $environment = env('APP_ENV', 'local');
         //Initialise the current_visitors table
         $deleted_visitors = CurrentVisitors::where('id', '>', '0')->delete();

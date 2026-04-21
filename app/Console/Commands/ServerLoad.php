@@ -16,29 +16,19 @@ class ServerLoad extends Command
     public function handle()
     {
         //
+        $cpuUsage = 0;
+        $cpuUsage = floatval($cpuUsage);
+        $environment = env('APP_ENV', 'local');
         if($environment == 'local')
         {
-            $process_snapshot = "arp -a | grep '$ip_address' | awk '{print $3}'";
+
         }
         else
         {
-            $process_snapshot = "ps -aux | grep -v 'USER'";
+            $cpu_usage = "top -b -n 1 | grep '%Cpu'| awk '{print $2}'";
+            $ram_usage = "top -b -n 1 | grep 'Mem'| grep -v 'Swap' | awk '{print $4, $8}'";
         }
+        $ram_segments = explode(' ', $ram_usage);print_r($ram_segments);die;
 
-        $fp = popen ($process_snapshot, "r");
-        $processes = array();
-        while ($rec = fgets($fp))
-        {
-            $process_snapshot[] = trim($rec);
-        }
-        foreach($processes as $process)
-        {
-            $cols = split(' ', ereg_replace(' +', ' ', $process));
-            if (strpos($cols[2], '.') > -1)
-            {
-                $cpuUsage += floatval($cols[2]);
-            }
-        }
-        print($cpuUsage);
     }
 }
