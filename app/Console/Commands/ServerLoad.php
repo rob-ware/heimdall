@@ -31,9 +31,9 @@ class ServerLoad extends Command
         $cpu_details = explode(':', $cpu_usage);
         $cpu_trim = explode('u', $cpu_details[1]);
         $cpu_percentage = trim($cpu_trim[0]);
-        printf("CPU Usage = $cpu_percentage%");
-
-        $ram_segments = explode(' ', $ram_usage);print_r($ram_segments);die;
+        $ram_segments = explode(' ', $ram_usage);
+        $ram_percentage =  $ram_segments[1] /  $ram_segments[0] * 100;
+        printf("$cpu_percentage : $ram_percentage");
 
     }
 }
