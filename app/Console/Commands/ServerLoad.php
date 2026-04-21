@@ -33,6 +33,7 @@ class ServerLoad extends Command
         $cpu_percentage = trim($cpu_trim[0]);
         $ram_segments = explode(' ', $ram_usage);
         $ram_percentage =  $ram_segments[1] /  $ram_segments[0] * 100;
+        $ram_percentage = round($ram_percentage,1);
         printf("$cpu_percentage : $ram_percentage");
 
     }
