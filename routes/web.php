@@ -8,7 +8,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Route for mailing
+//Route for mailing!
 Route::get('/email', function() {
     Mail::to('r.ware@ulster.ac.uk')->send(new MultipleMacsFound());
     return new MultipleMacsFound();
