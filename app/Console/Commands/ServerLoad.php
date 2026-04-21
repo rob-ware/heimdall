@@ -28,7 +28,10 @@ class ServerLoad extends Command
             $cpu_usage = shell_exec("top -b -n 1 | grep '%Cpu'| awk '{print $1, $2}'");
             $ram_usage = shell_exec("top -b -n 1 | grep 'Mem'| grep -v 'Swap' | awk '{print $4, $8}'");
         }
-        print_r($cpu_usage);
+        $cpu_details = explode(':', $cpu_usage);
+        $cpu_trim = explode('u', $cpu_details[1]);
+        $cpu_percentage = trim($cpu_trim);
+        printf("CPU Usage = $cpu_percentage%");
 
         $ram_segments = explode(' ', $ram_usage);print_r($ram_segments);die;
 
