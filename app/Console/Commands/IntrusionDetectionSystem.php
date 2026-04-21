@@ -8,6 +8,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use App\Mail\MultipleMacsFound;
+use App\Mail\UnauthorisedVisitorFound;
 use Illuminate\Support\Facades\Mail;
 
 #[Signature('app:intrusion-detection-system {--cli}')]
