@@ -1,10 +1,10 @@
 <x-mail::message>
-# Introduction
+# Warning! An unauthorised user is on the Recruit server!!
 
-The body of your message.
+This is to warn you that an unauthorised user has accessed the Recruit server!
 
-<x-mail::button :url="''">
-Button Text
+<x-mail::button :url="'https://test.heimdall.ulster.ac.uk'">
+Review Server
 </x-mail::button>
 
 Thanks,<br>
