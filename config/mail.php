@@ -1,32 +1,5 @@
 <?php
 
-$mail_user = env('MAIL_USERNAME');
-$mail_password = env('MAIL_PASSWORD');
-
-if (env('APP_ENV') == 'production') {
-    // If this is the test environment, then send emails to mailtrap
-    return [
-        'to' => [
-            'address' => 'pace@ulster.ac.uk',
-            'name' => 'Recruit Test Engineers',
-        ],
-
-        'driver' => 'smtp',
-        'host' => 'sandbox.smtp.mailtrap.io',
-        'port' => 2525,
-        'from' => [
-            'address' => 'pace@ulster.ac.uk',
-            'name' => 'Recruit Verification',
-        ],
-        'username' => "$mail_user",
-        'password' => "$mail_password",
-        'sendmail' => '/usr/sbin/sendmail -bs',
-        'pretend' => false,
-    ];
-}
-else
-{
-
 return [
 
     /*
@@ -143,4 +116,4 @@ return [
     ],
 
 ];
-}
+
