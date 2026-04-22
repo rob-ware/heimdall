@@ -66,7 +66,11 @@ class MonitorRootAccess extends Command
                     {
                         foreach($current_visitors as $current_visitor)
                         {
-                            if($current_visitor->authorised == 'no')
+                            if($current_visitor->authorised == 'yes')
+                            {
+                                continue;
+                            }
+                            else
                             {
                                 Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedRootUser());
                                 if($mode == 'cli')
