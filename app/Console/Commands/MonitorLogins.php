@@ -18,7 +18,7 @@ class MonitorLogins extends Command
     {
         //
         $mode = $this->argument('mode');
-        $filename = env('LOGIN_LOG', '/tmp/logins.log');
+        $filename = env('LOGIN_LOG', 'logins.log');
         if (file_exists($filename))
         {
             if($mode == 'cli')

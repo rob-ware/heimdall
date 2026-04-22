@@ -18,7 +18,7 @@ class MonitorEnvFile extends Command
     {
         //
         $mode = $this->argument('mode');
-        $filename = env('ENV_LOG', '/tmp/env.log');
+        $filename = env('ENV_LOG', 'env.log');
         if (file_exists($filename))
         {
             if($mode == 'cli')
