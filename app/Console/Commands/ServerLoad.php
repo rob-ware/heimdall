@@ -12,7 +12,7 @@ use App\Mail\HighSshLoad;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Console\Command;
 
-#[Signature('app:server-load')]
+#[Signature('app:server-load  {mode?}')]
 #[Description('Checks Server CPU loading')]
 class ServerLoad extends Command
 {
@@ -22,13 +22,14 @@ class ServerLoad extends Command
     public function handle()
     {
         //
+        $mode = $this->argument('mode');
         $cpuUsage = 0;
         $cpuUsage = floatval($cpuUsage);
         $environment = env('APP_ENV', 'local');
         $max_cpu = env('MAX_CPU', '90.0');
         $max_ram = env('MAX_RAM', '90');
         $max_https = env('MAX_HTTPS', '20');
-        $max_ssh = env('MAX_HTTPS', '2');
+        $max_ssh = env('MAX_SSH', '2');
         if($environment == 'local')
         {
             $cpu_usage = shell_exec("top -a -l 1 | grep 'CPU usage'| awk '{print $3}'");
@@ -67,28 +68,42 @@ class ServerLoad extends Command
         {
             //log and email a warning
             Mail::to('r.ware@ulster.ac.uk')->send(new HighCpuLoad());
-            $this->info('Emailing out warning on CPU load!');
+            if($mode == 'cli')
+            {
+                $this->info('Emailing out warning on CPU load!');
+            }
         }
 
         if($ram_percentage > $max_ram)
         {
             //log and email a warning
             Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
-            $this->info('Emailing out warning on RAM load!');
+            if($mode == 'cli')
+            {
+                $this->info('Emailing out warning on RAM load!');
+            }
+
         }
 
         if($https_connections > $max_https)
         {
             //log and email a warning
             Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
-            $this->info('Emailing out warning on HTTPS connections!');
+            if($mode == 'cli')
+            {
+                $this->info('Emailing out warning on HTTPS connections!');
+            }
         }
 
         if($ssh_connections > $max_ssh)
         {
             //log and email a warning
             Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
-            $this->info('Emailing out warning of on SSH connections!');
+            if($mode == 'cli')
+            {
+                $this->info('Emailing out warning of on SSH connections!');
+            }
+
         }
 
         $record_count = ServerWatch::count();

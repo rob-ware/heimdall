@@ -11,7 +11,7 @@ use App\Mail\MultipleMacsFound;
 use App\Mail\UnauthorisedVisitorFound;
 use Illuminate\Support\Facades\Mail;
 
-#[Signature('app:intrusion-detection-system {--cli}')]
+#[Signature('app:intrusion-detection-system  {mode?}')]
 #[Description('Checks OS users for authorisation')]
 class IntrusionDetectionSystem extends Command
 {
@@ -21,6 +21,7 @@ class IntrusionDetectionSystem extends Command
     public function handle()
     {
         //
+        $mode = $this->argument('mode');
         $environment = env('APP_ENV', 'local');
         //Initialise the current_visitors table
         $deleted_visitors = CurrentVisitors::where('id', '>', '0')->delete();
@@ -90,7 +91,7 @@ class IntrusionDetectionSystem extends Command
                         $authorised = 'no';
                         //log and email a warning
                         Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedVisitorFound());
-                        if ($this->option('cli'))
+                        if($mode == 'cli')
                         {
                             $this->info('Emailing out warning of an intruder!');
                         }
