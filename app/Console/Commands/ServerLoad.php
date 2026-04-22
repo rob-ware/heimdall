@@ -32,7 +32,7 @@ class ServerLoad extends Command
 
             $https_connections = shell_exec("netstat -t -l -n | grep 'tcp' | grep 'ESTABLISHED' | awk '{print $5}' | grep '.443' | wc -l");
             $https_connections = trim($https_connections);
-            $ssh_connections = shell_exec("netstat -t -l -n | grep 'tcp' | grep 'ESTABLISHED' | awk '{print $5}' | grep '.22 ' | wc -l");
+            $ssh_connections = shell_exec("netstat -t -l -n | grep 'tcp' | grep 'ESTABLISHED' | awk '{print $4}' | grep '.22 ' | wc -l");
             $ssh_connections = trim($ssh_connections);
         }
         else
@@ -49,7 +49,7 @@ class ServerLoad extends Command
 
             $https_connections = shell_exec("ss -nt state established  | awk '{print $4}' | grep ':443' | wc -l");
             $https_connections = trim($https_connections);
-            $ssh_connections = shell_exec("ss -nt state established  | awk '{print $4}' | grep ':22' | wc -l");
+            $ssh_connections = shell_exec("ss -nt state established  | awk '{print $3}' | grep ':22' | wc -l");
             $ssh_connections = trim($ssh_connections);
         }
 
