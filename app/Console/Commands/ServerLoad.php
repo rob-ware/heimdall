@@ -4,6 +4,11 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
+use App\Mail\HighCpuLoad;
+use App\Mail\HighHttpsLoad;
+use App\Mail\HighRamLoad;
+use App\Mail\HighSshLoad;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Console\Command;
 
 #[Signature('app:server-load')]
@@ -22,7 +27,7 @@ class ServerLoad extends Command
         if($environment == 'local')
         {
             $cpu_usage = shell_exec("top -a -l 1 | grep 'CPU usage'| awk '{print $3}'");
-            $cpu_percentage = substr($cpu_usage, 0, -2);
+            $cpu_percentage = (float) substr($cpu_usage, 0, -2);
 
             $ram_usage = shell_exec("top -a -l 1 | grep 'PhysMem'| awk '{print $2}'");
             $ram_usage = substr($ram_usage , 0, -2);
@@ -51,6 +56,34 @@ class ServerLoad extends Command
             $https_connections = trim($https_connections);
             $ssh_connections = shell_exec("ss -nt state established  | awk '{print $3}' | grep ':22' | wc -l");
             $ssh_connections = trim($ssh_connections);
+        }
+
+        if($cpu_percentage > 90.0)
+        {
+            //log and email a warning
+            Mail::to('r.ware@ulster.ac.uk')->send(new HighCpuLoad());
+            $this->info('Emailing out warning of CPU load!');
+        }
+
+        if($ram_percentage > 90)
+        {
+            //log and email a warning
+            Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
+            $this->info('Emailing out warning of CPU load!');
+        }
+
+        if($https_connections > 9)
+        {
+            //log and email a warning
+            Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
+            $this->info('Emailing out warning of CPU load!');
+        }
+
+        if($ssh_connections > 9)
+        {
+            //log and email a warning
+            Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
+            $this->info('Emailing out warning of CPU load!');
         }
 
         $timestamp = date('Y-m-d H:i:s');
