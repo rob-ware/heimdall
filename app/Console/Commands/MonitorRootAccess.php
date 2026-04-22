@@ -64,19 +64,21 @@ class MonitorRootAccess extends Command
                     $current_visitors = CurrentVisitors::where('name', $user)->get();
                     if($current_visitors->count() > 0);
                     {
+                        $flagged_users = array();
                         foreach($current_visitors as $current_visitor)
                         {
-                            if($current_visitor->authorised == 'yes')
+                            if($current_visitor->authorised == 'no')
                             {
-                                continue;
-                            }
-                            else
-                            {
-                                Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedRootUser());
-                                if($mode == 'cli')
+                                if(!in_array($current_visitor->name, $flagged_users))
                                 {
-                                    $this->info('Emailing out warning of invalid ROOT access!');
+                                    Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedRootUser());
+                                    if($mode == 'cli')
+                                    {
+                                        $this->info('Emailing out warning of invalid ROOT access!');
+                                    }
+                                    $flagged_users[] = $user;
                                 }
+
                             }
                         }
                     }
