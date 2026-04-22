@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\ServerWatch;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use App\Mail\HighCpuLoad;
@@ -24,6 +25,10 @@ class ServerLoad extends Command
         $cpuUsage = 0;
         $cpuUsage = floatval($cpuUsage);
         $environment = env('APP_ENV', 'local');
+        $max_cpu = env('MAX_CPU', '90.0');
+        $max_ram = env('MAX_RAM', '90');
+        $max_https = env('MAX_HTTPS', '20');
+        $max_ssh = env('MAX_HTTPS', '2');
         if($environment == 'local')
         {
             $cpu_usage = shell_exec("top -a -l 1 | grep 'CPU usage'| awk '{print $3}'");
@@ -58,37 +63,48 @@ class ServerLoad extends Command
             $ssh_connections = trim($ssh_connections);
         }
 
-        if($cpu_percentage > 90.0)
+        if($cpu_percentage > $max_cpu)
         {
             //log and email a warning
             Mail::to('r.ware@ulster.ac.uk')->send(new HighCpuLoad());
-            $this->info('Emailing out warning of CPU load!');
+            $this->info('Emailing out warning on CPU load!');
         }
 
-        if($ram_percentage > 90)
+        if($ram_percentage > $max_ram)
         {
             //log and email a warning
             Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
-            $this->info('Emailing out warning of CPU load!');
+            $this->info('Emailing out warning on RAM load!');
         }
 
-        if($https_connections > 9)
+        if($https_connections > $max_https)
         {
             //log and email a warning
             Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
-            $this->info('Emailing out warning of CPU load!');
+            $this->info('Emailing out warning on HTTPS connections!');
         }
 
-        if($ssh_connections > 9)
+        if($ssh_connections > $max_ssh)
         {
             //log and email a warning
             Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
-            $this->info('Emailing out warning of CPU load!');
+            $this->info('Emailing out warning of on SSH connections!');
         }
 
-        $timestamp = date('Y-m-d H:i:s');
+        $record_count = ServerWatch::count();
+        if($record_count > 5)
+        {
+            //Delete the oldest record
+            $redundant_record = ServerWatch::orderBy('created_at','desc')->first()->delete();
+        }
 
-        printf("$cpu_percentage:::$ram_percentage:::$https_connections:::$ssh_connections:::$timestamp");
+        $server_watch = new ServerWatch;
+        $server_watch->cpu_percentage = $cpu_percentage;
+        $server_watch->ram_percentage = $ram_percentage;
+        $server_watch->https_connections = $https_connections;
+        $server_watch->ssh_connections = $ssh_connections;
+
+        $server_watch->save();
 
     }
 }
