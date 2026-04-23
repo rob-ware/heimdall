@@ -22,6 +22,7 @@ class MonitorRootAccess extends Command
         //
         $mode = $this->argument('mode');
         $filename = env('SUDOERS_LOG', 'sudoers.log');
+        $flagged_users = array();
         if (file_exists($filename))
         {
             if($mode == 'cli')
@@ -64,7 +65,6 @@ class MonitorRootAccess extends Command
                     $current_visitors = CurrentVisitors::where('name', $user)->get();
                     if($current_visitors->count() > 0);
                     {
-                        $flagged_users = array();
                         foreach($current_visitors as $current_visitor)
                         {
                             if($current_visitor->authorised == 'no')
@@ -76,7 +76,7 @@ class MonitorRootAccess extends Command
                                     {
                                         $this->info('Emailing out warning of invalid ROOT access!');
                                     }
-                                    $flagged_users[] = $user;
+                                    $flagged_users[] = $current_visitor->name;
                                 }
 
                             }
