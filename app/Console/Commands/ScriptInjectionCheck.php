@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Models\SqlInjectionRisk;
 use stdClass;
+use App\Models\ScriptInjectionRisk;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('app:sql-injection-check  {mode?}')]
-#[Description('Checks for SQL Injection risks')]
-class SqlInjectionCheck extends Command
+#[Signature('app:script-injection-check {mode?}')]
+#[Description('Checks for risks of script injection')]
+class ScriptInjectionCheck extends Command
 {
     /**
      * Execute the console command.
@@ -19,10 +19,10 @@ class SqlInjectionCheck extends Command
     {
         //
         $mode = $this->argument('mode');
-        $app_dir = env('RECRUIT_APP_DIR', 'app');
-        $search = 'DB::connection';
+        $app_dir = env('RECRUIT_VIEWS_DIR', 'views');
+        $search = '{!!';
         //Initialise the database table
-        $redundant_records = SqlInjectionRisk::where('id', '>', '0')->delete();
+        $redundant_records = ScriptInjectionRisk::where('id', '>', '0')->delete();
         $results = array();
         if ($mode == 'cli')
         {
@@ -34,19 +34,20 @@ class SqlInjectionCheck extends Command
         {
             foreach($results as $result)
             {
-                $sql_injection_risk = new SqlInjectionRisk;
-                $sql_injection_risk->file_name = $result->file_name;
-                $sql_injection_risk->lines = $result->lines;
-                $sql_injection_risk->path = $result->path;
+                $script_injection_risk = new ScriptInjectionRisk;
+                $script_injection_risk->file_name = $result->file_name;
+                $script_injection_risk->lines = $result->lines;
+                $script_injection_risk->path = $result->path;
 
-                $sql_injection_risk->save();
+                $script_injection_risk->save();
             }
         }
         if($mode == 'cli')
         {
-            $this->info("Found $result_count files that need checked for SQL Injection!");
+            $this->info("Found $result_count files that need checked for Script Injection!");
             $this->info("Script complete!");
         }
+
     }
 
     public function get_directory_content($directory, $search, $results)
@@ -100,7 +101,5 @@ class SqlInjectionCheck extends Command
         }
         return $results;
     }
-
-
 
 }
