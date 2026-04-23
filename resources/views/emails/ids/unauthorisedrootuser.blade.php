@@ -1,11 +1,8 @@
 <x-mail::message>
-# Introduction
+# Warning! An unauthorised user has ROOT access!!
 
-The body of your message.
+    An unauthorised user has ROOT access!!
 
-<x-mail::button :url="''">
-Button Text
-</x-mail::button>
 
 Thanks,<br>
 {{ config('app.name') }}
