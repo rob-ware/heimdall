@@ -19,16 +19,16 @@ class ScriptInjectionCheck extends Command
     {
         //
         $mode = $this->argument('mode');
-        $app_dir = env('RECRUIT_VIEWS_DIR', 'views');
+        $view_dir = env('RECRUIT_VIEWS_DIR', 'views');
         $search = '{!!';
         //Initialise the database table
         $redundant_records = ScriptInjectionRisk::where('id', '>', '0')->delete();
         $results = array();
         if ($mode == 'cli')
         {
-            $this->info("Searching for '$search' below $app_dir!");
+            $this->info("Searching for '$search' below $view_dir!");
         }
-        $results = $this->get_directory_content($app_dir,$search, $results);
+        $results = $this->get_directory_content($view_dir,$search, $results);
         $result_count = count($results);
         if($result_count > 0)
         {
