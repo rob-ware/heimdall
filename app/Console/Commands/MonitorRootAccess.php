@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
 #[Signature('app:monitor-root-access {mode?}')]
-#[Description('Command description')]
+#[Description('Checks for suspicious root access')]
 class MonitorRootAccess extends Command
 {
     /**

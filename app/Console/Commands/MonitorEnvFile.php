@@ -8,7 +8,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 #[Signature('app:monitor-env-file  {mode?}')]
-#[Description('Command description')]
+#[Description('Checks for manipulation of the Recruit .env file')]
 class MonitorEnvFile extends Command
 {
     /**
