@@ -1,11 +1,12 @@
 <x-mail::message>
-# Introduction
+# A high CPU load has been noticed!
 
-The body of your message.
+The connected servers are:<br><br>
+@foreach($connected_ips as $connected_ip)
+    {{ $connected_ip->connnected_server }}
+@endforeach
+<br><br>
 
-<x-mail::button :url="''">
-Button Text
-</x-mail::button>
 
 Thanks,<br>
 {{ config('app.name') }}

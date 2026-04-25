@@ -13,13 +13,15 @@ use Illuminate\Queue\SerializesModels;
 class HighCpuLoad extends Mailable
 {
     use Queueable, SerializesModels;
+    public $connected_ips;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($ips)
     {
         //
+        $connected_ips = $ips;
     }
 
     /**
@@ -39,6 +41,9 @@ class HighCpuLoad extends Mailable
     {
         return new Content(
             markdown: 'emails.ids.highcpuload',
+            with: [
+                'connected_ips' => $this->connected_ips,
+            ]
         );
     }
 

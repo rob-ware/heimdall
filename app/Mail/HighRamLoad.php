@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use stdClass;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -13,13 +14,14 @@ use Illuminate\Queue\SerializesModels;
 class HighRamLoad extends Mailable
 {
     use Queueable, SerializesModels;
+    public $connected_ips;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($ips)
     {
-        //
+        $this->connected_ips = $ips;
     }
 
     /**
@@ -39,6 +41,9 @@ class HighRamLoad extends Mailable
     {
         return new Content(
             markdown: 'emails.ids.highramload',
+            with: [
+                'connected_ips' => $this->connected_ips,
+            ]
         );
     }
 

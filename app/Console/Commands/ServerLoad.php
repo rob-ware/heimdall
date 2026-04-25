@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use stdClass;
 use App\Models\ServerWatch;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -23,6 +24,7 @@ class ServerLoad extends Command
     {
         //
         $mode = $this->argument('mode');
+        $environment = env('APP_ENV', 'local');
         $cpuUsage = 0;
         $cpuUsage = floatval($cpuUsage);
         $environment = env('APP_ENV', 'local');
@@ -66,8 +68,9 @@ class ServerLoad extends Command
 
         if($cpu_percentage > $max_cpu)
         {
-            //log and email a warning
-            Mail::to('r.ware@ulster.ac.uk')->send(new HighCpuLoad());
+            //log and email a warning, with any connected server information
+            $connected_ips = $this->get_connected_ips($environment);
+            Mail::to('r.ware@ulster.ac.uk')->send(new HighCpuLoad($connected_ips));
             if($mode == 'cli')
             {
                 $this->info('Emailing out warning on CPU load!');
@@ -76,8 +79,9 @@ class ServerLoad extends Command
 
         if($ram_percentage > $max_ram)
         {
-            //log and email a warning
-            Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
+            //log and email a warning, with any connected server information
+            $connected_ips = $this->get_connected_ips($environment);
+            Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad($connected_ips));
             if($mode == 'cli')
             {
                 $this->info('Emailing out warning on RAM load!');
@@ -87,8 +91,9 @@ class ServerLoad extends Command
 
         if($https_connections > $max_https)
         {
-            //log and email a warning
-            Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
+            //log and email a warning, with any connected server information
+            $connected_ips = $this->get_connected_ips($environment);
+            Mail::to('r.ware@ulster.ac.uk')->send(new HighHttpsLoad($connected_ips));
             if($mode == 'cli')
             {
                 $this->info('Emailing out warning on HTTPS connections!');
@@ -97,8 +102,9 @@ class ServerLoad extends Command
 
         if($ssh_connections > $max_ssh)
         {
-            //log and email a warning
-            Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad());
+            //log and email a warning, with any connected server information
+            $connected_ips = $this->get_connected_ips($environment);
+            Mail::to('r.ware@ulster.ac.uk')->send(new HighSshLoad($connected_ips));
             if($mode == 'cli')
             {
                 $this->info('Emailing out warning of on SSH connections!');
@@ -121,5 +127,33 @@ class ServerLoad extends Command
 
         $server_watch->save();
 
+    }
+    public function get_connected_ips($environment)
+    {
+        if($environment == 'local')
+        {
+            $connected_ip_scan = "arp -a";
+        }
+        else
+        {
+            $connected_ip_scan = "ip neigh";
+        }
+
+        $fp = popen ($connected_ip_scan, "r");
+        $connected_ips = array();
+        while ($rec = fgets($fp))
+        {
+            $ip_address = new stdClass;
+            $ip_address->connnected_server = trim($rec);
+            $connected_ips[] =  $ip_address;
+        }
+        if(count($connected_ips) > 1)
+        {
+            $ip_address = new stdClass;
+            $ip_address->connnected_server = "Currently there are no inbound connections!";
+            $connected_ips[] =  $ip_address;
+        }
+
+        return $connected_ips;
     }
 }
