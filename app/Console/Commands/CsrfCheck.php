@@ -37,6 +37,7 @@ class CsrfCheck extends Command
             {
                 $csrf_injection_risk = new CsrfRisk;
                 $csrf_injection_risk->file_name = $result->file_name;
+                $csrf_injection_risk->head_directory = $result->head_directory;
                 $csrf_injection_risk->path = $result->path;
 
                 $csrf_injection_risk->save();
@@ -92,6 +93,11 @@ class CsrfCheck extends Command
                                 $obj = new stdClass;
                                 $obj->file_name = $file;
                                 $obj->path = $path;
+                                $prefix = env('RECRUIT_VIEWS_DIR', 'views');
+                                $prefix = $prefix."/";
+                                $relative_path_string =  preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $path);
+                                $relative_path = explode('/', $relative_path_string);
+                                $obj->head_directory = $relative_path[0];
                                 $results[] = $obj;
                             }
 

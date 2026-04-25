@@ -38,6 +38,7 @@ class ScriptInjectionCheck extends Command
                 $script_injection_risk->file_name = $result->file_name;
                 $script_injection_risk->lines = $result->lines;
                 $script_injection_risk->path = $result->path;
+                $script_injection_risk->head_directory = $result->head_directory;
 
                 $script_injection_risk->save();
             }
@@ -76,6 +77,11 @@ class ScriptInjectionCheck extends Command
                             $obj = new stdClass;
                             $obj->file_name = $file;
                             $obj->path = $path;
+                            $prefix = env('RECRUIT_VIEWS_DIR', 'views');
+                            $prefix = $prefix."/";
+                            $relative_path_string =  preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $path);
+                            $relative_path = explode('/', $relative_path_string);
+                            $obj->head_directory = $relative_path[0];
 
                             $lines = array();
                             $line_number = 0;

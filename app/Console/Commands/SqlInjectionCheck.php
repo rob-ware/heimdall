@@ -38,6 +38,7 @@ class SqlInjectionCheck extends Command
                 $sql_injection_risk->file_name = $result->file_name;
                 $sql_injection_risk->lines = $result->lines;
                 $sql_injection_risk->path = $result->path;
+                $sql_injection_risk->head_directory = $result->head_directory;
 
                 $sql_injection_risk->save();
             }
@@ -75,6 +76,18 @@ class SqlInjectionCheck extends Command
                             $obj = new stdClass;
                             $obj->file_name = $file;
                             $obj->path = $path;
+                            $prefix = env('RECRUIT_APP_DIR', 'app');
+                            $prefix = $prefix."/";
+                            $relative_path_string =  preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $path);
+                            $relative_path = explode('/', $relative_path_string);
+                            if($relative_path[0] = 'Console')
+                            {
+                                $obj->head_directory = $relative_path[1];
+                            }
+                            else
+                            {
+                                $obj->head_directory = $relative_path[2];
+                            }
 
                             $lines = array();
                             $line_number = 0;
