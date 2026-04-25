@@ -16,7 +16,7 @@
     <div style="padding-bottom: 40px;" class="container">
         <div class="row">
                 <div class="col-sm-6 col-md-6 col-lg-6 col-xs-6">
-                    <a href="/"><i class="fa fa-code" style="font-size:24px;color:blue">></i></i></a>
+                    <a href="/code"><i class="fa fa-code" style="font-size:24px;color:blue">></i></i></a>
                 </div>
                 <div style="text-align: right" class="col-sm-6 col-md-6 col-lg-16 col-xs-6">
                     <a href="{{ env('APP_URL') }}"><i class="fa fa-sign-out" style="font-size:24px;color:red"></i></a>

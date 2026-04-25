@@ -10,6 +10,7 @@ use App\Models\SudoEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
+
 class ServerController extends Controller
 {
     //Provides analysis of server security

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServerController;
+use App\Http\Controllers\CodeController;
 
 use App\Mail\MultipleMacsFound;
 use Illuminate\Support\Facades\Mail;
@@ -17,3 +18,5 @@ Route::get('/email', function() {
 });
 
 Route::get('/server', [ServerController::class, 'show']);
+Route::get('/code', [CodeController::class, 'show']);
+

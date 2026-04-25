@@ -80,9 +80,21 @@ class SqlInjectionCheck extends Command
                             $prefix = $prefix."/";
                             $relative_path_string =  preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $path);
                             $relative_path = explode('/', $relative_path_string);
-                            if($relative_path[0] = 'Console')
+                            if(in_array('Console', $relative_path))
                             {
                                 $obj->head_directory = $relative_path[1];
+                            }
+                            elseif(in_array('Models', $relative_path))
+                            {
+                                $obj->head_directory = $relative_path[0];
+                            }
+                            elseif(in_array('Services', $relative_path))
+                            {
+                                $obj->head_directory = $relative_path[0];
+                            }
+                            elseif(in_array('Controllers', $relative_path))
+                            {
+                                $obj->head_directory = "$relative_path[2] Cntr";
                             }
                             else
                             {
