@@ -50,7 +50,7 @@ class IntrusionDetectionSystem extends Command
         {
             foreach($current_visitors as $current_visitor)
             {
-                $visitor_details = explode(' ',$current_visitor);print_r($visitor_details);die;
+                $visitor_details = explode(' ',$current_visitor);
                 $name = $visitor_details[0];
                 $ip_address = $visitor_details[1];
                 $year = date('Y');
