@@ -22,6 +22,10 @@ class MonitorRootAccess extends Command
         //
         $mode = $this->argument('mode');
         $filename = env('SUDOERS_LOG', 'sudoers.log');
+        $today = $date = date('Y-m-d', time());
+        $today = $today.' 00:00:00';
+        //Flush records older than today
+        $redundant_records = SudoEvent::where('timestamp', '>', $today)->delete();
         $flagged_users = array();
         if (file_exists($filename))
         {
