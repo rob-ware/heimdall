@@ -24,6 +24,7 @@ class IntrusionDetectionSystem extends Command
         //Only keep today's records for the moment as there is an e-Mail trail
         $today = $date = date('Y-m-d', time());
         $today = $today.' 00:00:00';
+        $previous_scan = date('Y-m-d H:i:s', strtotime("-2 minutes"));
         $redundant_records = CurrentVisitors::where('login_time', '<', $today)->delete();
         //Check for CLI debug mode
         $mode = $this->argument('mode');
@@ -59,7 +60,6 @@ class IntrusionDetectionSystem extends Command
                 $login = $visitor_details[4];
                 $login_time = "$year-$month-$day $login:00";
                 //Check if we have already logged this visitor
-                $previous_scan = date('Y-m-d H:i:s', strtotime("-2 minutes"));
                 $existing_login_record = CurrentVisitors::where('name', $name)
                                                             ->where('ip_address', $ip_address)
                                                             ->where('login_time', '<', $previous_scan)
@@ -109,12 +109,16 @@ class IntrusionDetectionSystem extends Command
                     {
                         //email a warning
                         $authorised = 'no';
-                        //log and email a warning
-                        Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedVisitorFound());
-                        if($mode == 'cli')
+                        //log and email a warning but only if it is a new login
+                        if(!$existing_login_record)
                         {
-                            $this->info('Emailing out warning of an intruder!');
+                            Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedVisitorFound());
+                            if($mode == 'cli')
+                            {
+                                $this->info('Emailing out warning of an intruder!');
+                            }
                         }
+
                     }
                     else
                     {
