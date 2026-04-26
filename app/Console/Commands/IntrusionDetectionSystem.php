@@ -58,13 +58,19 @@ class IntrusionDetectionSystem extends Command
                 $day = $visitor_details[3];
                 $login = $visitor_details[4];
                 $login_time = "$year-$month-$day $login:00";
-                $time = strtotime($login);
-                if (($time - time()) > 120) {
-                    // Login more than 2 minutes ago so we should already have logged it.
-                    if($mode == 'cli')
+                //Check if we have already logged this visitor
+                $previous_scan = date('Y-m-d H:i:s', strtotime("-2 minutes"));
+                $existing_login_record = CurrentVisitors::where('name', $name)
+                                                            ->where('ip_address', $ip_address)
+                                                            ->where('login_time', '<', $previous_scan)
+                                                            ->first();
+                if($existing_login_record)
+                {
+                    if ($this->option('cli'))
                     {
-                        $this->info('Found an earlier login!');
+                        $this->info("Found an earlier login for user $name!");
                     }
+                    continue;
                 }
                 if($environment == 'local')
                 {
@@ -81,6 +87,7 @@ class IntrusionDetectionSystem extends Command
                 {
                     $visitor_macs[] = trim($rec);
                 }
+                //Handle an intruder impersonating an existing visitor
                 if(count($visitor_macs) > 1)
                 {
                     //log and email a warning
