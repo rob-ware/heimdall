@@ -25,6 +25,7 @@ class IntrusionDetectionSystem extends Command
         $today = $date = date('Y-m-d', time());
         $today = $today.' 00:00:00';
         $previous_scan = date('Y-m-d H:i:s', strtotime("-2 minutes"));
+        $this->info("Script previously ran at $previous_scan!");
         $redundant_records = CurrentVisitors::where('login_time', '<', $today)->delete();
         //Check for CLI debug mode
         $mode = $this->argument('mode');
@@ -32,7 +33,7 @@ class IntrusionDetectionSystem extends Command
         $environment = env('APP_ENV', 'local');
         if($environment == 'local')
         {
-            $current_visitors_search = "last | grep 'still logged in' | grep '.' | awk '{print $1, $2, $5, $6, $7}'";
+            $current_visitors_search = "last | grep 'still logged in' | grep '.'  | awk '{print $1, $2, $4, $5, $6}'";
         }
         else
         {
@@ -49,16 +50,23 @@ class IntrusionDetectionSystem extends Command
         {
             foreach($current_visitors as $current_visitor)
             {
-                $visitor_details = explode(' ',$current_visitor);
+                $visitor_details = explode(' ',$current_visitor);print_r($visitor_details);die;
                 $name = $visitor_details[0];
                 $ip_address = $visitor_details[1];
-                $month = $visitor_details[2];
                 $year = date('Y');
-                $timestamp =  strtotime('JAN'.$year);
-                $month = date('m',$timestamp);
-                $day = $visitor_details[3];
-                $login = $visitor_details[4];
-                $login_time = "$year-$month-$day $login:00";
+                if($environment == 'local')
+                {
+                    $month = $visitor_details[3];
+                    $day = $visitor_details[2];
+                    $login = $visitor_details[4];
+                }
+                else
+                {
+                    $month = $visitor_details[2];
+                    $day = $visitor_details[3];
+                    $login = $visitor_details[4];
+                }
+                $login_time = "$year-$month-$day $login:00";printf($login_time);die;
                 //Check if we have already logged this visitor
                 $existing_login_record = CurrentVisitors::where('name', $name)
                                                             ->where('ip_address', $ip_address)
@@ -109,14 +117,11 @@ class IntrusionDetectionSystem extends Command
                     {
                         //email a warning
                         $authorised = 'no';
-                        //log and email a warning but only if it is a new login
-                        if(!$existing_login_record)
+                        //log and email a warning
+                        Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedVisitorFound());
+                        if($mode == 'cli')
                         {
-                            Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedVisitorFound());
-                            if($mode == 'cli')
-                            {
-                                $this->info('Emailing out warning of an intruder!');
-                            }
+                            $this->info('Emailing out warning of an intruder!');
                         }
 
                     }
