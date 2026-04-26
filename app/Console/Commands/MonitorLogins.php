@@ -45,7 +45,7 @@ class MonitorLogins extends Command
                 $today = $date = date('Y-m-d', time());
                 $today = $today.' 00:00:00';
                 //Flush records older than today
-                $redundant_records = FailedLogin::where('timestamp', '>', $today)->delete();
+                $redundant_records = FailedLogin::where('timestamp', '<', $today)->delete();
                 foreach($failed_logins as $failed_login)
                 {
                     $login_details = explode(' ', $failed_login);

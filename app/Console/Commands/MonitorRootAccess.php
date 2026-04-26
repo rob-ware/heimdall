@@ -49,7 +49,7 @@ class MonitorRootAccess extends Command
                 $today = $date = date('Y-m-d', time());
                 $today = $today.' 00:00:00';
                 //Flush records older than today
-                $redundant_records = SudoEvent::where('timestamp', '>', $today)->delete();
+                $redundant_records = SudoEvent::where('timestamp', '<', $today)->delete();
                 foreach($sudo_events as $sudo_event)
                 {
                     $event_details = explode(' ', $sudo_event);
