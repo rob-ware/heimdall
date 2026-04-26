@@ -66,7 +66,7 @@ class IntrusionDetectionSystem extends Command
                     $day = $visitor_details[3];
                     $login = $visitor_details[4];
                 }
-                $login_time = "$year-$month-$day $login:00";printf($login_time);die;
+                $login_time = "$year-$month-$day $login:00";
                 //Check if we have already logged this visitor
                 $existing_login_record = CurrentVisitors::where('name', $name)
                                                             ->where('ip_address', $ip_address)
