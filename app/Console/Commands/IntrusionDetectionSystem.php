@@ -25,7 +25,6 @@ class IntrusionDetectionSystem extends Command
         $today = $date = date('Y-m-d', time());
         $today = $today.' 00:00:00';
         $previous_scan = date('Y-m-d H:i:s', strtotime("-2 minutes"));
-        $this->info("Script previously ran at $previous_scan!");
         $redundant_records = CurrentVisitors::where('login_time', '<', $today)->delete();
         //Check for CLI debug mode
         $mode = $this->argument('mode');
@@ -66,7 +65,7 @@ class IntrusionDetectionSystem extends Command
                     $day = $visitor_details[3];
                     $login = $visitor_details[4];
                 }
-                $login_time = "$year-$month-$day $login:00";
+                $login_time = date('Y-m-d H:i:s', strtotime("$year-$month-$day $login:00"));
                 //Check if we have already logged this visitor
                 $existing_login_record = CurrentVisitors::where('name', $name)
                                                             ->where('ip_address', $ip_address)
