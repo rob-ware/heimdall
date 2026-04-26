@@ -200,7 +200,7 @@
                 @endif
             </div>
         </div>
-        <div class="row">
+        <div style="padding-top:20px;" class="row">
             <div class="col-sm-6 col-md-6 col-lg-6 col-xs-6">
                 <h8><strong>Failed Login Attemps</strong></h8><br><br>
                 @if($failed_logins)
