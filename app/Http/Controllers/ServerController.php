@@ -21,19 +21,19 @@ class ServerController extends Controller
     public function show()
     {
         //Current users on the server
-        $visitors = CurrentVisitors::orderBy('login_time', 'desc')->get();
+        $visitors = CurrentVisitors::orderBy('login_time', 'desc')->get();//print_r($visitors);die;
         if($visitors)
         {
             foreach($visitors as $visitor)
             {
                 $visitor->login_time = date('D H:i', strtotime($visitor->login_time));
-                if($visitor->name == 'rob')
+                if($visitor->name == 'rob' || $visitor->name == 'r.ware')
                 {
                     $visitor->image = 'images/rob.jpg';
                 }
                 elseif($visitor->name == 'casey')
                 {
-                    $visitor->image = 'images/rob.jpg';
+                    $visitor->image = 'images/casey.jpg';
                 }
                 else
                 {

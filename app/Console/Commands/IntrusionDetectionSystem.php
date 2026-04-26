@@ -47,6 +47,9 @@ class IntrusionDetectionSystem extends Command
 
         if(count($current_visitors) > 0)
         {
+            //Row counter for Mac
+            $record = 0;
+            $line = "";
             foreach($current_visitors as $current_visitor)
             {
                 $visitor_details = explode(' ',$current_visitor);
@@ -58,6 +61,8 @@ class IntrusionDetectionSystem extends Command
                     $month = $visitor_details[3];
                     $day = $visitor_details[2];
                     $login = $visitor_details[4];
+                    $record++;
+                    $line = "awk 'NR==$record{ print; }'";
                 }
                 else
                 {
@@ -81,7 +86,7 @@ class IntrusionDetectionSystem extends Command
                 }
                 if($environment == 'local')
                 {
-                    $visitor_mac_search = "arp -a | grep '$ip_address' | awk '{print $3}'";
+                    $visitor_mac_search = "arp -a | $line | awk '{print $4}'";
                 }
                 else
                 {
@@ -125,6 +130,11 @@ class IntrusionDetectionSystem extends Command
 
                     }
                     else
+                    {
+                        $authorised = 'yes';
+                    }
+                    //Simulation for Demo in Mac OS
+                    if($environment == 'local' && $ip_address == 'console')
                     {
                         $authorised = 'yes';
                     }
