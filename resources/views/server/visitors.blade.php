@@ -186,7 +186,7 @@
                             <div class="col-sm-4 col-md-4 col-lg-4 col-xs-4">
                                 {{ $env_action->timestamp }}
                             </div>
-                            <div class="col-sm-4 col-md-4 col-lg-4 col-xs-4">
+                            <div class="col-sm-8 col-md-8 col-lg-8 col-xs-8">
                                 {{ $env_action->action}}
                             </div>
                         </div>

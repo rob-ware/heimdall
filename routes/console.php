@@ -1,13 +1,5 @@
 <?php
 
-use App\Console\Commands\CsrfCheck;
-use App\Console\Commands\ScriptInjectionCheck;
-use App\Console\Commands\SqlInjectionCheck;
-use App\Console\Commands\MonitorEnvFile;
-use App\Console\Commands\MonitorLogins;
-use App\Console\Commands\MonitorRootAccess;
-use App\Console\Commands\ServerLoad;
-use App\Console\Commands\IntrusionDetectionSystem;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;

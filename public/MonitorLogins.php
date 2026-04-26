@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace public;
 
 use App\Models\FailedLogin;
 use Illuminate\Console\Attributes\Description;
