@@ -16,15 +16,19 @@ use Illuminate\Support\Facades\Mail;
 class IntrusionDetectionSystem extends Command
 {
     /**
-     * Execute the console command.
+     * Detects logins from an unauthorised MAC address
+     * Script runs on console scheduler every 2 minutes
      */
     public function handle()
     {
-        //
+        //Only keep today's records for the moment as there is an e-Mail trail
+        $today = $date = date('Y-m-d', time());
+        $today = $today.' 00:00:00';
+        $redundant_records = CurrentVisitors::where('timestamp', '<', $today)->delete();
+        //Check for CLI debug mode
         $mode = $this->argument('mode');
+
         $environment = env('APP_ENV', 'local');
-        //Initialise the current_visitors table
-        $deleted_visitors = CurrentVisitors::where('id', '>', '0')->delete();
         if($environment == 'local')
         {
             $current_visitors_search = "last | grep 'still logged in' | grep '.' | awk '{print $1, $2, $5, $6, $7}'";
@@ -54,6 +58,14 @@ class IntrusionDetectionSystem extends Command
                 $day = $visitor_details[3];
                 $login = $visitor_details[4];
                 $login_time = "$year-$month-$day $login:00";
+                $time = strtotime($login);
+                if (($time - time()) > 120) {
+                    // Login more than 2 minutes ago so we should alread have logged it.
+                    if($mode == 'cli')
+                    {
+                        $this->info('Found an earlier login!');
+                    }
+                }
                 if($environment == 'local')
                 {
                     $visitor_mac_search = "arp -a | grep '$ip_address' | awk '{print $3}'";
@@ -81,6 +93,7 @@ class IntrusionDetectionSystem extends Command
                 if(count($visitor_macs) === 1)
                 {
                     $mac_address = $visitor_macs[0];
+                    //Check if they are in the authorised list of MAC addresses
                     $authorised_visitor = AuthorisedVisitors::where('mac_address', $mac_address)
                         ->where('name', $name)
                         ->where('ip_address', $ip_address)
