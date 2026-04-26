@@ -24,7 +24,7 @@ class IntrusionDetectionSystem extends Command
         //Only keep today's records for the moment as there is an e-Mail trail
         $today = $date = date('Y-m-d', time());
         $today = $today.' 00:00:00';
-        $redundant_records = CurrentVisitors::where('timestamp', '<', $today)->delete();
+        $redundant_records = CurrentVisitors::where('login_time', '<', $today)->delete();
         //Check for CLI debug mode
         $mode = $this->argument('mode');
 
@@ -60,7 +60,7 @@ class IntrusionDetectionSystem extends Command
                 $login_time = "$year-$month-$day $login:00";
                 $time = strtotime($login);
                 if (($time - time()) > 120) {
-                    // Login more than 2 minutes ago so we should alread have logged it.
+                    // Login more than 2 minutes ago so we should already have logged it.
                     if($mode == 'cli')
                     {
                         $this->info('Found an earlier login!');
