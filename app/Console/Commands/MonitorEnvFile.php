@@ -21,8 +21,6 @@ class MonitorEnvFile extends Command
         $filename = env('ENV_LOG', 'env.log');
         $today = $date = date('Y-m-d', time());
         $today = $today.' 00:00:00';
-        //Flush records older than today
-        $redundant_records = EnvAction::where('timestamp', '>', $today)->delete();
         if (file_exists($filename))
         {
             if($mode == 'cli')
@@ -46,6 +44,8 @@ class MonitorEnvFile extends Command
                 {
                     $this->info("Found $action_count actions against the Recruit .env file!");
                 }
+                //Flush records older than today
+                $redundant_records = EnvAction::where('timestamp', '>', $today)->delete();
                 foreach($env_actions as $env_action)
                 {
                     $action_details = explode('=', $env_action);

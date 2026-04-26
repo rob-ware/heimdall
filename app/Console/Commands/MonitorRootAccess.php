@@ -22,10 +22,6 @@ class MonitorRootAccess extends Command
         //
         $mode = $this->argument('mode');
         $filename = env('SUDOERS_LOG', 'sudoers.log');
-        $today = $date = date('Y-m-d', time());
-        $today = $today.' 00:00:00';
-        //Flush records older than today
-        $redundant_records = SudoEvent::where('timestamp', '>', $today)->delete();
         $flagged_users = array();
         if (file_exists($filename))
         {
@@ -50,6 +46,10 @@ class MonitorRootAccess extends Command
                 {
                     $this->info("Found $sudo_count ROOT logins in the current interval!");
                 }
+                $today = $date = date('Y-m-d', time());
+                $today = $today.' 00:00:00';
+                //Flush records older than today
+                $redundant_records = SudoEvent::where('timestamp', '>', $today)->delete();
                 foreach($sudo_events as $sudo_event)
                 {
                     $event_details = explode(' ', $sudo_event);
