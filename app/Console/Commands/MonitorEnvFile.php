@@ -19,6 +19,8 @@ class MonitorEnvFile extends Command
         //
         $mode = $this->argument('mode');
         $filename = env('ENV_LOG', 'env.log');
+        //Flush existing records
+        $redundant_records = EnvAction::where('id', '>', '0')->delete();
         if (file_exists($filename))
         {
             if($mode == 'cli')
@@ -42,7 +44,6 @@ class MonitorEnvFile extends Command
                 {
                     $this->info("Found $action_count actions against the Recruit .env file!");
                 }
-                $redundant_records = EnvAction::where('id', '>', '0')->delete();
                 foreach($env_actions as $env_action)
                 {
                     $action_details = explode('=', $env_action);
