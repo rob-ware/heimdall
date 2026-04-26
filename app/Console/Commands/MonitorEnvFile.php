@@ -19,8 +19,10 @@ class MonitorEnvFile extends Command
         //
         $mode = $this->argument('mode');
         $filename = env('ENV_LOG', 'env.log');
-        //Flush existing records
-        $redundant_records = EnvAction::where('id', '>', '0')->delete();
+        $today = $date = date('Y-m-d', time());
+        $today = $today.' 00:00:00';
+        //Flush records older than today
+        $redundant_records = EnvAction::where('timestamp', '>', $today)->delete();
         if (file_exists($filename))
         {
             if($mode == 'cli')
