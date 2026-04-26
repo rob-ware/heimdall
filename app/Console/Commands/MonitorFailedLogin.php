@@ -1,15 +1,15 @@
 <?php
 
-namespace public;
+namespace App\Console\Commands;
 
 use App\Models\FailedLogin;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('app:monitor-logins {mode?}')]
+#[Signature('app:monitor-failed-login  {mode?}')]
 #[Description('Monitors failed logins')]
-class MonitorLogins extends Command
+class MonitorFailedLogin extends Command
 {
     /**
      * Execute the console command.
@@ -19,6 +19,10 @@ class MonitorLogins extends Command
         //
         $mode = $this->argument('mode');
         $filename = env('LOGIN_LOG', 'logins.log');
+        //Flush records older than today
+        $today = $date = date('Y-m-d', time());
+        $today = $today.' 00:00:00';
+        $redundant_records = FailedLogin::where('login_time', '<', $today)->delete();
         if (file_exists($filename))
         {
             if($mode == 'cli')
@@ -42,10 +46,6 @@ class MonitorLogins extends Command
                 {
                     $this->info("Found $login_count failed logins!");
                 }
-                $today = $date = date('Y-m-d', time());
-                $today = $today.' 00:00:00';
-                //Flush records older than today
-                $redundant_records = FailedLogin::where('timestamp', '<', $today)->delete();
                 foreach($failed_logins as $failed_login)
                 {
                     $login_details = explode(' ', $failed_login);
