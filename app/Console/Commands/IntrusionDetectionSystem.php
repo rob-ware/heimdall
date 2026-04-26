@@ -133,7 +133,7 @@ class IntrusionDetectionSystem extends Command
                     $new_visitor->ip_address = $ip_address;
                     $new_visitor->mac_address = $mac_address;
                     $new_visitor->authorised = $authorised;
-                    $new_visitor->login_time = $login_time;printf($login_time);die;
+                    $new_visitor->login_time = $login_time;
                     $new_visitor->save();
                 }
 
