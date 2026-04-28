@@ -54,6 +54,7 @@ class ServerLoad extends Command
             $cpu_details = explode(':', $cpu_usage);
             $cpu_trim = explode('u', $cpu_details[1]);
             $cpu_percentage = trim($cpu_trim[0]);
+            $cpu_percentage = $cpu_percentage / 4;
 
             $ram_usage = shell_exec("top -b -n 1 | grep 'Mem'| grep -v 'Swap' | awk '{print $4, $8}'");
             $ram_segments = explode(' ', $ram_usage);
