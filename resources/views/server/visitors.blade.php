@@ -111,7 +111,7 @@
                             },
                             series: [
                                 {
-                                    name: 'Max RAM = 16GB',
+                                    name: 'Max RAM = {!! $installed_ram !!}',
                                     data: [{!! $ram_text !!}]
                                 }
                             ]

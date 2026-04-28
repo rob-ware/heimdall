@@ -92,6 +92,7 @@ class ServerController extends Controller
             $cpu_text = substr($cpu_text, 0, -1);
             $ram_text = substr($ram_text, 0, -1);
         }
+        $installed_ram = env('RAM_TOTAL', '16Gb');
 
         return view('server.visitors')
             ->with('visitors', $visitors)
@@ -99,6 +100,7 @@ class ServerController extends Controller
             ->with('failed_logins', $failed_logins)
             ->with('sudo_events', $sudo_events)
             ->with('cpu_text', $cpu_text)
+            ->with('installed_ram', $installed_ram)
             ->with('ram_text', $ram_text);
     }
 

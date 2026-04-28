@@ -28,20 +28,35 @@ class ServerLoad extends Command
         $cpuUsage = 0;
         $cpuUsage = floatval($cpuUsage);
         $environment = env('APP_ENV', 'local');
+        $mail_enabled = env('MAIL_ENABLED', 'no');
         $max_cpu = env('MAX_CPU', '90.0');
         $max_ram = env('MAX_RAM', '90');
         $max_https = env('MAX_HTTPS', '20');
         $max_ssh = env('MAX_SSH', '2');
         if($environment == 'local')
         {
-            $cpu_usage = shell_exec("top -a -l 1 | grep 'CPU usage'| awk '{print $3}'");
-            $cpu_percentage = (float) substr($cpu_usage, 0, -2);
+            $cpu_idle = shell_exec("top -a -l 1 | grep 'CPU usage'| awk '{print $7}'");
+            $cpu_idle = (float) substr($cpu_idle, 0, -2);
+            $cpu_percentage = 100.0 - $cpu_idle;
 
-            $ram_usage = shell_exec("top -a -l 1 | grep 'PhysMem'| awk '{print $2}'");
+
+            $ram_usage = shell_exec("top -a -l 1 | grep 'PhysMem'| awk '{print $2, $6}'");
             $ram_usage = substr($ram_usage , 0, -2);
-            $ram_usage = (int) $ram_usage;
-            $ram_percentage =  $ram_usage /  32 * 100;
+            $ram_segments = explode(' ', $ram_usage);
+            $ram_total = substr($ram_segments[0] , 0, -1);
+            $ram_used = $ram_segments[1];
+            //Convert Mb to Gb
+            $ram_used = $ram_used / 1000;
+            if($ram_total > 0)
+            {
+                $ram_percentage = $ram_used / $ram_total * 100;
+            }
+            else
+            {
+                $ram_percentage = 0;
+            }
             $ram_percentage = round($ram_percentage,1);
+
 
             $https_connections = shell_exec("netstat -t -l -n | grep 'tcp' | grep 'ESTABLISHED' | awk '{print $5}' | grep '.443' | wc -l");
             $https_connections = trim($https_connections);
@@ -71,18 +86,25 @@ class ServerLoad extends Command
         {
             //log and email a warning, with any connected server information
             $connected_ips = $this->get_connected_ips($environment);
-            Mail::to('r.ware@ulster.ac.uk')->send(new HighCpuLoad($connected_ips));
-            if($mode == 'cli')
+            if($mail_enabled == 'yes')
             {
-                $this->info('Emailing out warning on CPU load!');
+                Mail::to('r.ware@ulster.ac.uk')->send(new HighCpuLoad($connected_ips));
+                if($mode == 'cli')
+                {
+                    $this->info('Emailing out warning on CPU load!');
+                }
             }
+
         }
 
         if($ram_percentage > $max_ram)
         {
             //log and email a warning, with any connected server information
             $connected_ips = $this->get_connected_ips($environment);
-            Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad($connected_ips));
+            if($mail_enabled == 'yes')
+            {
+                Mail::to('r.ware@ulster.ac.uk')->send(new HighRamLoad($connected_ips));
+            }
             if($mode == 'cli')
             {
                 $this->info('Emailing out warning on RAM load!');
@@ -94,7 +116,10 @@ class ServerLoad extends Command
         {
             //log and email a warning, with any connected server information
             $connected_ips = $this->get_connected_ips($environment);
-            Mail::to('r.ware@ulster.ac.uk')->send(new HighHttpsLoad($connected_ips));
+            if($mail_enabled == 'yes')
+            {
+                Mail::to('r.ware@ulster.ac.uk')->send(new HighHttpsLoad($connected_ips));
+            }
             if($mode == 'cli')
             {
                 $this->info('Emailing out warning on HTTPS connections!');
@@ -105,7 +130,10 @@ class ServerLoad extends Command
         {
             //log and email a warning, with any connected server information
             $connected_ips = $this->get_connected_ips($environment);
-            Mail::to('r.ware@ulster.ac.uk')->send(new HighSshLoad($connected_ips));
+            if($mail_enabled == 'yes')
+            {
+                Mail::to('r.ware@ulster.ac.uk')->send(new HighSshLoad($connected_ips));
+            }
             if($mode == 'cli')
             {
                 $this->info('Emailing out warning of on SSH connections!');

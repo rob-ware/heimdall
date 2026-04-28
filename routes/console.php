@@ -14,9 +14,9 @@ Schedule::command('app:script-injection-check')->daily();
 Schedule::command('app:sql-injection-check')->daily();
 
 
-Schedule::command('app:monitor-env-file')->everyThreeMinutes();
-Schedule::command('app:monitor-failed-login')->everyTwoMinutes();
-Schedule::command('app:intrusion-detection-system')->everyTwoMinutes();
-Schedule::command('app:monitor-root-access')->everyMinute();
-Schedule::command('app:server-load')->everyThirtySeconds();
+Schedule::command('app:monitor-env-file')->everyThirtySeconds();
+Schedule::command('app:monitor-failed-login')->everyThirtySeconds();
+Schedule::command('app:intrusion-detection-system')->everyThirtySeconds();
+Schedule::command('app:monitor-root-access')->everyThirtySeconds();
+Schedule::command('app:server-load')->everyFifteenSeconds();
 

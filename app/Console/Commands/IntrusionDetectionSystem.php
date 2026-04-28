@@ -30,6 +30,7 @@ class IntrusionDetectionSystem extends Command
         $mode = $this->argument('mode');
 
         $environment = env('APP_ENV', 'local');
+        $mail_enabled = env('MAIL_ENABLED', 'no');
         if($environment == 'local')
         {
             $current_visitors_search = "last | grep 'still logged in' | grep '.'  | awk '{print $1, $2, $4, $5, $6}'";
@@ -102,12 +103,16 @@ class IntrusionDetectionSystem extends Command
                 //Handle an intruder impersonating an existing visitor
                 if(count($visitor_macs) > 1)
                 {
-                    //log and email a warning
-                    Mail::to('r.ware@ulster.ac.uk')->send(new MultipleMacsFound());
+                    //email a warning
+                    if($mail_enabled == 'yes')
+                    {
+                        Mail::to('r.ware@ulster.ac.uk')->send(new MultipleMacsFound());
+                    }
                     if ($this->option('cli'))
                     {
                         $this->info('Emailing out warning of multiple MAC addresses!');
                     }
+
                 }
                 if(count($visitor_macs) === 1)
                 {
@@ -121,13 +126,15 @@ class IntrusionDetectionSystem extends Command
                     {
                         //email a warning
                         $authorised = 'no';
-                        //log and email a warning
-                        Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedVisitorFound());
+                        if($mail_enabled == 'yes')
+                        {
+                            //email a warning
+                            Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedVisitorFound());
+                        }
                         if($mode == 'cli')
                         {
                             $this->info('Emailing out warning of an intruder!');
                         }
-
                     }
                     else
                     {

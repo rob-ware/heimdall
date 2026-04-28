@@ -20,6 +20,7 @@ class MonitorRootAccess extends Command
     public function handle()
     {
         //
+        $mail_enabled = env('MAIL_ENABLED', 'no');
         $today = $date = date('Y-m-d', time());
         $today = $today.' 00:00:00';
         //Flush records older than today
@@ -75,7 +76,10 @@ class MonitorRootAccess extends Command
                             {
                                 if(!in_array($current_visitor->name, $flagged_users))
                                 {
-                                    Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedRootUser());
+                                    if($mail_enabled == 'yes')
+                                    {
+                                        Mail::to('r.ware@ulster.ac.uk')->send(new UnauthorisedRootUser());
+                                    }
                                     if($mode == 'cli')
                                     {
                                         $this->info('Emailing out warning of invalid ROOT access!');
