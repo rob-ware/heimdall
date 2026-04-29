@@ -20,11 +20,19 @@ class MonitorRootAccess extends Command
     public function handle()
     {
         //
+        $environment = env('APP_ENV', 'local');
         $mail_enabled = env('MAIL_ENABLED', 'no');
         $today = $date = date('Y-m-d', time());
         $today = $today.' 00:00:00';
-        //Flush records older than today
-        $redundant_records = SudoEvent::where('timestamp', '<', $today)->delete();
+        //Keep today's records in production but delete all for demo in development
+        if($environment == 'local')
+        {
+            $redundant_records = SudoEvent::truncate();
+        }
+        else
+        {
+            $redundant_records = SudoEvent::where('login_time', '<', $today)->delete();
+        }
         $mode = $this->argument('mode');
         $filename = env('SUDOERS_LOG', 'sudoers.log');
         $flagged_users = array();

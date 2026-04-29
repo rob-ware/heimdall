@@ -17,12 +17,20 @@ class MonitorFailedLogin extends Command
     public function handle()
     {
         //
+        $environment = env('APP_ENV', 'local');
         $mode = $this->argument('mode');
         $filename = env('LOGIN_LOG', 'logins.log');
-        //Flush records older than today
+        //Keep today's records in production but delete all for demo in development
         $today = $date = date('Y-m-d', time());
         $today = $today.' 00:00:00';
-        $redundant_records = FailedLogin::where('login_time', '<', $today)->delete();
+        if($environment == 'local')
+        {
+            $redundant_records = FailedLogin::truncate();
+        }
+        else
+        {
+            $redundant_records = FailedLogin::where('login_time', '<', $today)->delete();
+        }
         if (file_exists($filename))
         {
             if($mode == 'cli')

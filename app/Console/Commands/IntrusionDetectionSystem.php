@@ -21,15 +21,24 @@ class IntrusionDetectionSystem extends Command
      */
     public function handle()
     {
-        //Only keep today's records for the moment as there is an e-Mail trail
-        $today = $date = date('Y-m-d', time());
-        $today = $today.' 00:00:00';
-        $previous_scan = date('Y-m-d H:i:s', strtotime("-2 minutes"));
-        $redundant_records = CurrentVisitors::where('login_time', '<', $today)->delete();
+
         //Check for CLI debug mode
         $mode = $this->argument('mode');
 
         $environment = env('APP_ENV', 'local');
+        //Keep today's records in production but delete all for demo in development
+        $today = $date = date('Y-m-d', time());
+        $today = $today.' 00:00:00';
+        $previous_scan = date('Y-m-d H:i:s', strtotime("-2 minutes"));
+        if($environment == 'local')
+        {
+            $redundant_records = CurrentVisitors::truncate();
+        }
+        else
+        {
+            $redundant_records = CurrentVisitors::where('login_time', '<', $today)->delete();
+        }
+
         $mail_enabled = env('MAIL_ENABLED', 'no');
         if($environment == 'local')
         {

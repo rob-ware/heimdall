@@ -145,7 +145,7 @@ class ServerLoad extends Command
         if($record_count > 5)
         {
             //Delete the oldest record
-            $redundant_record = ServerWatch::orderBy('created_at','desc')->first()->delete();
+            $redundant_record = ServerWatch::orderBy('id')->first()->delete();
         }
 
         $server_watch = new ServerWatch;

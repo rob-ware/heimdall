@@ -17,10 +17,18 @@ class MonitorEnvFile extends Command
     public function handle()
     {
         //
-        //Flush records older than today
+        $environment = env('APP_ENV', 'local');
+        //Keep today's records in production but delete all for demo in development
         $today = $date = date('Y-m-d', time());
         $today = $today.' 00:00:00';
-        $redundant_records = EnvAction::where('timestamp', '<', $today)->delete();
+        if($environment == 'local')
+        {
+            $redundant_records = EnvAction::truncate();
+        }
+        else
+        {
+            $redundant_records = EnvAction::where('login_time', '<', $today)->delete();
+        }
         $mode = $this->argument('mode');
         $filename = env('ENV_LOG', 'env.log');
         if (file_exists($filename))
